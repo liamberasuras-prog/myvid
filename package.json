@@ -1,0 +1,12 @@
+{
+  "name": "myvids-pro",
+  "version": "1.0.0",
+  "description": "MyVids Pro media platform with persistent storage",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=16"
+  }
+}

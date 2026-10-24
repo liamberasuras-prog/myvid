@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MyVids Pro - Media Platform</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHJlY3QgeD0iMiIgeT0iMiIgd2lkdGg9IjIwIiBoZWlnaHQ9IjIwIiByeD0iNSIgcnk9IjUiIGZpbGw9IiMzZWE2ZmYiIGZpbGwtb3BhY2l0eT0iMC4xNSI+PC9yZWN0PjxwYXRoIGQ9Ik0xMCA4bDYgNC02IDRWOHoiIGZpbGw9IiMzZWE2ZmYiPjwvcGF0aD48L3N2Zz4=">
+
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Roboto', sans-serif;
+        }
+        body {
+            background-color: #0F0F0F;
+            color: #F1F1F1;
+            overflow-x: hidden;
+        }
+        header {
+            background-color: #0F0F0F;
+            height: 56px;
+            padding: 0 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 1px solid #272727;
+        }
+        .left-section { display: flex; align-items: center; gap: 16px; }
+        .menu-icon { cursor: pointer; padding: 8px; border-radius: 50%; display: flex; align-items: center; }
+        .menu-icon:hover { background-color: #272727; }
+        .menu-icon svg { width: 24px; height: 24px; fill: #F1F1F1; }
+        .logo-container { display: flex; align-items: center; gap: 4px; cursor: pointer; text-decoration: none; color: inherit; }
+        .logo-icon { width: 30px; height: 22px; }
+        .logo-text { font-size: 20px; font-weight: 700; letter-spacing: -0.5px; }
+        .search-container { display: flex; align-items: center; width: 40%; max-width: 600px; }
+        .search-bar {
+            width: 100%;
+            background-color: #121212;
+            border: 1px solid #303030;
+            border-radius: 40px 0 0 40px;
+            padding: 0 16px;
+            height: 40px;
+            color: #F1F1F1;
+            font-size: 16px;
+            outline: none;
+        }
+        .search-bar:focus { border-color: #3ea6ff; }
+        .search-btn {
+            background-color: #222222;
+            border: 1px solid #303030;
+            border-left: none;
+            border-radius: 0 40px 40px 0;
+            height: 40px;
+            padding: 0 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .search-btn:hover { background-color: #272727; }
+        .search-btn svg { width: 18px; height: 18px; fill: #F1F1F1; }
+        .right-section { display: flex; align-items: center; gap: 8px; position: relative; }
+        .action-icon-btn { background: none; border: none; cursor: pointer; padding: 8px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+        .action-icon-btn:hover { background-color: #272727; }
+        .action-icon-btn svg { width: 24px; height: 24px; fill: #F1F1F1; }
+        .auth-trigger-btn {
+            background-color: transparent;
+            border: 1px solid #3ea6ff;
+            color: #3ea6ff;
+            padding: 0 12px;
+            height: 36px;
+            border-radius: 18px;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .auth-trigger-btn:hover { background-color: rgba(62,166,255,0.1); }
+        .user-profile-badge { display: none; align-items: center; }
+        .profile-dropdown-wrapper { position: relative; display: inline-block; }
+        .user-avatar {
+            width: 32px; height: 32px; border-radius: 50%;
+            background-color: #e91e63; color: white;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: bold; font-size: 14px; cursor: pointer;
+        }
+        .profile-menu-panel {
+            display: none; position: absolute; top: 40px; right: 0;
+            background-color: #282828; border: 1px solid #404040; border-radius: 8px;
+            width: 220px; box-shadow: 0 4px 16px rgba(0,0,0,0.5);
+            flex-direction: column; padding: 8px 0; z-index: 2000;
+        }
+        .menu-panel-item { padding: 10px 16px; font-size: 14px; color: #F1F1F1; cursor: pointer; display: flex; align-items: center; gap: 12px; }
+        .menu-panel-item:hover { background-color: #3F3F3F; }
+        .menu-panel-item svg { width: 20px; height: 20px; fill: #F1F1F1; }
+        .main-layout { display: flex; min-height: calc(100vh - 56px); }
+        .sidebar { width: 240px; background-color: #0F0F0F; padding: 12px; flex-shrink: 0; }
+        .sidebar-item { display: flex; align-items: center; gap: 24px; padding: 0 12px; height: 40px; border-radius: 10px; cursor: pointer; font-size: 14px; font-weight: 500; }
+        .sidebar-item:hover, .sidebar-item.active { background-color: #272727; }
+        .sidebar-item svg { width: 20px; height: 20px; fill: #F1F1F1; }
+        .content-area { flex-grow: 1; padding: 24px; background-color: #0F0F0F; min-width: 0; }
+        .video-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 40px 16px; }
+        .no-content-state { grid-column: 1 / -1; text-align: center; padding: 60px 20px; color: #AAA; }
+        .video-card { cursor: pointer; display: flex; flex-direction: column; gap: 12px; }
+        .thumbnail-box { position: relative; width: 100%; padding-bottom: 56.25%; background-color: #272727; border-radius: 12px; overflow: hidden; }
+        .thumbnail-box video { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; }
+        .card-details { display: flex; gap: 12px; }
+        .chan-icon {
+            width: 36px; height: 36px; border-radius: 50%;
+            background-color: #3f51b5; color: #fff;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: bold; flex-shrink: 0;
+            background-size: cover; background-position: center;
+        }
+        .meta-text { display: flex; flex-direction: column; gap: 4px; }
+        .v-title {
+            font-size: 16px; font-weight: 500; line-height: 22px; color: #F1F1F1;
+            display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+        }
+        .v-author, .v-stats { font-size: 14px; color: #AAAAAA; }
+        .watch-view { display: none; grid-template-columns: 1fr 400px; gap: 24px; max-width: 1750px; margin: 0 auto; width: 100%; }
+        .primary-column { display: flex; flex-direction: column; }
+        .player-viewport { position: relative; width: 100%; padding-bottom: 56.25%; background-color: #000; border-radius: 12px; overflow: hidden; }
+        .player-viewport video { position: absolute; top: 0; left: 0; width: 100%; height: 100%; outline: none; }
+        .watch-title { font-size: 20px; font-weight: 700; margin: 12px 0; line-height: 28px; }
+        .watch-actions-bar { display: flex; justify-content: space-between; align-items: center; padding-bottom: 12px; border-bottom: 1px solid #303030; margin-bottom: 12px; }
+        .channel-info-block { display: flex; align-items: center; gap: 12px; }
+        .subscribe-btn { background-color: #F1F1F1; color: #0F0F0F; border: none; padding: 0 16px; height: 36px; border-radius: 18px; font-weight: 500; cursor: pointer; }
+        .delete-btn { background: none; border: 1px solid #aa3333; color: #ff6b6b; padding: 0 16px; height: 36px; border-radius: 18px; font-weight: 500; cursor: pointer; display: none; margin-right: 8px; }
+        .delete-btn:hover { background-color: rgba(255,80,80,0.1); }
+        .secondary-column { display: flex; flex-direction: column; gap: 16px; }
+        .sidebar-card { display: flex; gap: 8px; cursor: pointer; }
+        .sidebar-thumb { width: 168px; height: 94px; background-color: #272727; border-radius: 8px; overflow: hidden; flex-shrink: 0; position: relative; }
+        .sidebar-thumb video { width: 100%; height: 100%; object-fit: cover; }
+        .sidebar-meta { display: flex; flex-direction: column; gap: 4px; }
+        .sidebar-title {
+            font-size: 14px; font-weight: 500; line-height: 20px;
+            display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+        }
+        .modal-shade {
+            display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background-color: rgba(0,0,0,0.8); z-index: 5000; align-items: center; justify-content: center;
+        }
+        .modal-body { background-color: #212121; border-radius: 12px; padding: 24px; width: 90%; max-width: 480px; display: flex; flex-direction: column; gap: 16px; }
+        .modal-body h2 { font-size: 20px; font-weight: 500; }
+        .form-input {
+            width: 100%; height: 44px; background-color: #121212; border: 1px solid #444;
+            border-radius: 6px; padding: 0 12px; color: #FFF; font-size: 15px; outline: none;
+        }
+        .form-input:focus { border-color: #3ea6ff; }
+        .modal-actions { display: flex; justify-content: flex-end; gap: 12px; margin-top: 10px; }
+        .text-btn { background: none; border: none; color: #AAA; font-weight: 500; cursor: pointer; padding: 10px 16px; }
+        .text-btn:hover { color: #FFF; }
+        .action-pill-btn { background-color: #3ea6ff; color: #0F0F0F; border: none; padding: 0 20px; height: 38px; border-radius: 19px; font-weight: 500; cursor: pointer; }
+        .action-pill-btn:hover { background-color: #65b8ff; }
+        .action-pill-btn:disabled { opacity: 0.5; cursor: default; }
+        .progress-wrap { display: none; height: 6px; background: #333; border-radius: 3px; overflow: hidden; }
+        .progress-bar { height: 100%; width: 0; background: #3ea6ff; transition: width 0.15s; }
+        .progress-label { display: none; font-size: 13px; color: #AAA; }
+        @media (max-width: 1000px) { .watch-view { grid-template-columns: 1fr; } .sidebar { display: none; } }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="left-section">
+            <div class="menu-icon" onclick="resetToHome()">
+                <svg viewBox="0 0 24 24"><path d="M21 6H3V5h18v1zm0 5H3v1h18v-1zm0 6H3v1h18v-1z"></path></svg>
+            </div>
+            <a class="logo-container" href="#" onclick="resetToHome(); return false;">
+                <svg class="logo-icon" viewBox="0 0 24 24" style="fill: none; stroke: #3ea6ff; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;">
+                    <rect x="2" y="2" width="20" height="20" rx="5" ry="5" fill="#3ea6ff" fill-opacity="0.15"></rect>
+                    <path d="M10 8l6 4-6 4V8z" fill="#3ea6ff"></path>
+                </svg>
+                <span class="logo-text" style="color: #3ea6ff;">MyVids</span>
+            </a>
+        </div>
+        <div class="search-container">
+            <input type="text" class="search-bar" id="searchInput" placeholder="Search files..." oninput="filterVideos()">
+            <button class="search-btn"><svg viewBox="0 0 24 24"><path d="M20.87 20.17l-5.59-5.59C16.35 13.35 17 11.75 17 10c0-3.87-3.13-7-7-7S3 6.13 3 10s3 3.87 7 3.87c1.75 0 3.35-.65 4.58-1.71l5.59 5.59.7-.71zM10 13c-1.65 0-3-1.35-3-3s1.35-3 3-3 3 1.35 3 3-1.35 3-3 3z"></path></svg></button>
+        </div>
+
+        <div class="right-section">
+            <button class="action-icon-btn" onclick="openUploadModal()" title="Upload Video">
+                <svg viewBox="0 0 24 24"><path d="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4zM14 13h-3v3H9v-3H6v-2h3V8h2v3h3v2z"></path></svg>
+            </button>
+
+            <button class="auth-trigger-btn" id="loginTriggerBtn" onclick="openAuthModal()">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/></svg>
+                Sign In
+            </button>
+
+            <div class="user-profile-badge" id="userProfileBadge">
+                <div class="profile-dropdown-wrapper">
+                    <div class="user-avatar" id="avatarCircle" onclick="toggleProfileMenu()" style="background-size: cover; background-position: center;">U</div>
+                    <div class="profile-menu-panel" id="profileMenuPanel">
+                        <div class="menu-panel-item" onclick="openSettingsModal()">
+                            <svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
+                            <span>Profile Settings</span>
+                        </div>
+                        <div class="menu-panel-item" onclick="accountLogout()" style="border-top:1px solid #404040;">
+                            <svg viewBox="0 0 24 24"><path d="M10.09 15.59L11.5 17l5-5-5-5-1.41 1.41L13.17 11H3v2h10.17l-3.08 3.59zM19 3H5c-1.1 0-2 .9-2 2v4h2V5h14v14H5v-4H3v4c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/></svg>
+                            <span>Sign Out</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="main-layout">
+        <aside class="sidebar">
+            <nav>
+                <div class="sidebar-item active" onclick="resetToHome()">
+                    <svg viewBox="0 0 24 24"><path d="M4 21V10.08l8-6.92 8 6.92V21h-7v-6H9v6H4z"></path></svg>
+                    <span>Home</span>
+                </div>
+            </nav>
+        </aside>
+
+        <main class="content-area">
+            <div class="video-grid" id="videoGrid"></div>
+
+            <div class="watch-view" id="watchView">
+                <div class="primary-column">
+                    <div class="player-viewport" id="playerViewport"></div>
+                    <h1 class="watch-title" id="watchTitle"></h1>
+                    <div class="watch-actions-bar">
+                        <div class="channel-info-block">
+                            <div class="chan-icon" id="watchChannelIcon"></div>
+                            <div class="meta-text">
+                                <span style="font-weight: 500;" id="watchChannelName"></span>
+                                <span style="font-size:12px;color:#AAA;">Creator Studio Member</span>
+                            </div>
+                        </div>
+                        <div>
+                            <button class="delete-btn" id="deleteVideoBtn" onclick="deleteCurrentVideo()">Delete</button>
+                            <button class="subscribe-btn">Subscribe</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="secondary-column" id="relatedSidebar"></div>
+            </div>
+        </main>
+    </div>
+
+    <div class="modal-shade" id="authModal">
+        <div class="modal-body">
+            <h2 id="authModalTitle">Sign In to MyVids</h2>
+            <input type="text" class="form-input" id="authUsername" placeholder="Username" autocomplete="username">
+            <input type="password" class="form-input" id="authPassword" placeholder="Password" autocomplete="current-password" onkeydown="if(event.key==='Enter')handleAuthSubmit()">
+            <div class="modal-actions">
+                <button class="text-btn" onclick="toggleAuthMode()" id="authToggleBtn">Create Account</button>
+                <button class="text-btn" onclick="closeModals()">Cancel</button>
+                <button class="action-pill-btn" onclick="handleAuthSubmit()" id="authSubmitBtn">Sign In</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-shade" id="uploadModal">
+        <div class="modal-body">
+            <h2>Upload Video</h2>
+            <input type="text" class="form-input" id="uploadTitle" placeholder="Video Title" maxlength="150">
+            <div style="color:#AAA; font-size:13px; margin-bottom:-4px;">Select Video File:</div>
+            <input type="file" id="uploadFile" accept="video/*" style="color:#FFF;">
+            <div class="progress-wrap" id="uploadProgressWrap"><div class="progress-bar" id="uploadProgressBar"></div></div>
+            <div class="progress-label" id="uploadProgressLabel"></div>
+            <div class="modal-actions">
+                <button class="text-btn" onclick="closeModals()" id="uploadCancelBtn">Cancel</button>
+                <button class="action-pill-btn" onclick="handleVideoUpload()" id="uploadSubmitBtn">Upload</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-shade" id="settingsModal">
+        <div class="modal-body">
+            <h2>Profile Credentials Settings</h2>
+            <div style="color:#AAA; font-size:13px; margin-bottom:-6px;">Custom Profile Picture (PFP):</div>
+            <input type="file" id="settingsAvatarFile" accept="image/png, image/jpeg, image/webp" onchange="handleAvatarUpload(this.files)" style="color: #FFF;">
+            <div style="color:#AAA; font-size:13px; margin-bottom:-6px; margin-top: 8px;">Change Account Password:</div>
+            <input type="password" class="form-input" id="settingsOldPassword" placeholder="Current Password" autocomplete="current-password">
+            <input type="password" class="form-input" id="settingsNewPassword" placeholder="New Password (min 6 characters)" autocomplete="new-password">
+            <div class="modal-actions">
+                <button class="text-btn" onclick="closeModals()">Close</button>
+                <button class="action-pill-btn" onclick="handleCredentialsUpdate()">Update Password</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ---------- state ----------
+        let activeUser = null;
+        let activeAvatarV = null;
+        let token = null;
+        let isRegisterMode = false;
+        let cachedVideos = [];
+        let currentVideoId = null;
+
+        try { token = localStorage.getItem("myvids_token"); } catch (e) {}
+
+        // ---------- API helper ----------
+        async function api(path, opts = {}) {
+            const headers = Object.assign({}, opts.headers || {});
+            if (token) headers["Authorization"] = "Bearer " + token;
+            let body = opts.body;
+            if (opts.json !== undefined) {
+                headers["Content-Type"] = "application/json";
+                body = JSON.stringify(opts.json);
+            }
+            const res = await fetch(path, { method: opts.method || "GET", headers, body });
+            let data = null;
+            try { data = await res.json(); } catch (e) {}
+            if (!res.ok) throw new Error((data && data.error) || ("Request failed (" + res.status + ")"));
+            return data;
+        }
+
+        const avatarUrl = (user, v) => "/api/avatar/" + encodeURIComponent(user) + "?v=" + v;
+        const mediaUrl = id => "/media/" + id;
+
+        // ---------- session ----------
+        function setSignedIn(username, avatarV) {
+            activeUser = username;
+            activeAvatarV = avatarV;
+            document.getElementById("loginTriggerBtn").style.display = "none";
+            document.getElementById("userProfileBadge").style.display = "flex";
+            renderActiveUserAvatar();
+        }
+        function setSignedOut() {
+            activeUser = null; activeAvatarV = null; token = null;
+            try { localStorage.removeItem("myvids_token"); } catch (e) {}
+            document.getElementById("loginTriggerBtn").style.display = "flex";
+            document.getElementById("userProfileBadge").style.display = "none";
+        }
+
+        async function checkPersistentSession() {
+            if (!token) return;
+            try {
+                const me = await api("/api/me");
+                setSignedIn(me.username, me.avatarV);
+            } catch (e) {
+                setSignedOut(); // token expired / invalid
+            }
+        }
+
+        function toggleProfileMenu() {
+            const panel = document.getElementById("profileMenuPanel");
+            panel.style.display = (panel.style.display === "flex") ? "none" : "flex";
+        }
+        window.addEventListener("click", function(e) {
+            if (!e.target.matches('#avatarCircle')) {
+                document.getElementById("profileMenuPanel").style.display = "none";
+            }
+        });
+
+        function openAuthModal() {
+            isRegisterMode = false;
+            document.getElementById("authModalTitle").innerText = "Sign In to MyVids";
+            document.getElementById("authSubmitBtn").innerText = "Sign In";
+            document.getElementById("authToggleBtn").innerText = "Create Account";
+            document.getElementById("authModal").style.display = "flex";
+        }
+        function toggleAuthMode() {
+            isRegisterMode = !isRegisterMode;
+            document.getElementById("authModalTitle").innerText = isRegisterMode ? "Create Account" : "Sign In to MyVids";
+            document.getElementById("authSubmitBtn").innerText = isRegisterMode ? "Register" : "Sign In";
+            document.getElementById("authToggleBtn").innerText = isRegisterMode ? "Have an account? Login" : "Create Account";
+        }
+
+        async function handleAuthSubmit() {
+            const user = document.getElementById("authUsername").value.trim();
+            const pass = document.getElementById("authPassword").value;
+            if (!user || !pass) return alert("Fill in credentials fields.");
+            try {
+                const r = await api(isRegisterMode ? "/api/register" : "/api/login", { method: "POST", json: { username: user, password: pass } });
+                token = r.token;
+                try { localStorage.setItem("myvids_token", token); } catch (e) {}
+                setSignedIn(r.username, r.avatarV);
+                document.getElementById("authPassword").value = "";
+                closeModals();
+                refreshVideos();
+            } catch (e) { alert(e.message); }
+        }
+
+        function openSettingsModal() {
+            document.getElementById("settingsOldPassword").value = "";
+            document.getElementById("settingsNewPassword").value = "";
+            document.getElementById("settingsModal").style.display = "flex";
+        }
+
+        async function handleCredentialsUpdate() {
+            const oldPass = document.getElementById("settingsOldPassword").value;
+            const newPass = document.getElementById("settingsNewPassword").value;
+            if (!oldPass || !newPass) return alert("Please populate security parameters.");
+            try {
+                await api("/api/password", { method: "POST", json: { oldPassword: oldPass, newPassword: newPass } });
+                alert("Password updated successfully.");
+                closeModals();
+            } catch (e) { alert(e.message); }
+        }
+
+        async function accountLogout() {
+            if (!confirm("Log out of your active session?")) return;
+            try { await api("/api/logout", { method: "POST" }); } catch (e) {}
+            setSignedOut();
+            resetToHome();
+        }
+
+        // ---------- upload ----------
+        function openUploadModal() {
+            if (!activeUser) return alert("You must sign in before uploading videos.");
+            document.getElementById("uploadModal").style.display = "flex";
+        }
+
+        function closeModals() {
+            document.getElementById("authModal").style.display = "none";
+            document.getElementById("uploadModal").style.display = "none";
+            document.getElementById("settingsModal").style.display = "none";
+        }
+
+        function handleVideoUpload() {
+            const title = document.getElementById("uploadTitle").value.trim();
+            const fileInput = document.getElementById("uploadFile");
+            if (!title || fileInput.files.length === 0) return alert("Please specify a title and choose a file container.");
+
+            const file = fileInput.files[0];
+            const mime = file.type || (/\.mkv$/i.test(file.name) ? "video/x-matroska" : "");
+            if (!mime.startsWith("video/")) return alert("Please choose a video file.");
+
+            const submitBtn = document.getElementById("uploadSubmitBtn");
+            const wrap = document.getElementById("uploadProgressWrap");
+            const bar = document.getElementById("uploadProgressBar");
+            const label = document.getElementById("uploadProgressLabel");
+            submitBtn.disabled = true;
+            wrap.style.display = "block"; label.style.display = "block";
+            bar.style.width = "0%"; label.innerText = "Uploading... 0%";
+
+            const xhr = new XMLHttpRequest();
+            xhr.open("POST", "/api/videos?title=" + encodeURIComponent(title));
+            xhr.setRequestHeader("Authorization", "Bearer " + token);
+            xhr.setRequestHeader("Content-Type", mime);
+            xhr.upload.onprogress = e => {
+                if (e.lengthComputable) {
+                    const pct = Math.round(e.loaded / e.total * 100);
+                    bar.style.width = pct + "%";
+                    label.innerText = "Uploading... " + pct + "%";
+                }
+            };
+            const finish = () => {
+                submitBtn.disabled = false;
+                wrap.style.display = "none"; label.style.display = "none";
+            };
+            xhr.onload = () => {
+                finish();
+                if (xhr.status >= 200 && xhr.status < 300) {
+                    closeModals();
+                    document.getElementById("uploadTitle").value = "";
+                    fileInput.value = "";
+                    refreshVideos();
+                } else {
+                    let msg = "Upload failed (" + xhr.status + ")";
+                    try { msg = JSON.parse(xhr.responseText).error || msg; } catch (e) {}
+                    alert(msg);
+                }
+            };
+            xhr.onerror = () => { finish(); alert("Network error during upload."); };
+            xhr.send(file);
+        }
+
+        async function deleteCurrentVideo() {
+            if (!currentVideoId || !confirm("Delete this video permanently?")) return;
+            try {
+                await api("/api/videos/" + currentVideoId, { method: "DELETE" });
+                currentVideoId = null;
+                await refreshVideos();
+                resetToHome();
+            } catch (e) { alert(e.message); }
+        }
+
+        // ---------- profile picture ----------
+        async function handleAvatarUpload(files) {
+            if (!files || files.length === 0) return;
+            const file = files[0];
+            if (file.size > 5 * 1024 * 1024) return alert("Image must be under 5 MB.");
+            try {
+                const r = await api("/api/avatar", { method: "POST", headers: { "Content-Type": file.type }, body: file });
+                activeAvatarV = r.avatarV;
+                renderActiveUserAvatar();
+                await refreshVideos();
+                alert("Profile image saved successfully!");
+            } catch (e) { alert(e.message); }
+        }
+
+        function renderActiveUserAvatar() {
+            const avatarCircle = document.getElementById("avatarCircle");
+            if (activeAvatarV) {
+                avatarCircle.style.backgroundImage = `url('${avatarUrl(activeUser, activeAvatarV)}')`;
+                avatarCircle.innerText = "";
+            } else {
+                avatarCircle.style.backgroundImage = "none";
+                avatarCircle.innerText = activeUser.charAt(0).toUpperCase();
+            }
+        }
+
+        // ---------- videos ----------
+        async function refreshVideos() {
+            try {
+                cachedVideos = await api("/api/videos");
+            } catch (e) {
+                cachedVideos = [];
+                document.getElementById("videoGrid").innerHTML = `<div class="no-content-state">Could not reach the server.</div>`;
+                return;
+            }
+            if (document.getElementById("watchView").style.display === "grid" && currentVideoId) return;
+            filterVideos();
+        }
+
+        function avatarMarkup(author, v, cls) {
+            if (v) return `<div class="${cls}" style="background-image: url('${avatarUrl(author, v)}');"></div>`;
+            return `<div class="${cls}">${escapeHtml(author.charAt(0).toUpperCase())}</div>`;
+        }
+
+        function generateBrowseGrid(dataset) {
+            const grid = document.getElementById('videoGrid');
+            grid.innerHTML = '';
+
+            if (dataset.length === 0) {
+                grid.innerHTML = `<div class="no-content-state">No videos hosted yet. Click the upload button to populate!</div>`;
+                return;
+            }
+
+            dataset.forEach(video => {
+                const card = document.createElement('div');
+                card.className = 'video-card';
+                card.onclick = () => launchWatchMode(video.id);
+                card.innerHTML = `
+                    <div class="thumbnail-box">
+                        <video src="${mediaUrl(video.id)}#t=1" muted playsinline preload="metadata"></video>
+                    </div>
+                    <div class="card-details">
+                        ${avatarMarkup(video.author, video.authorAvatarV, "chan-icon")}
+                        <div class="meta-text">
+                            <span class="v-title">${escapeHtml(video.title)}</span>
+                            <span class="v-author">${escapeHtml(video.author)}</span>
+                            <span class="v-stats">${timeAgo(video.timestamp)}</span>
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function launchWatchMode(id) {
+            const targetVideo = cachedVideos.find(v => v.id === id);
+            if (!targetVideo) return;
+            currentVideoId = id;
+
+            document.getElementById('videoGrid').style.display = 'none';
+            document.getElementById('watchView').style.display = 'grid';
+
+            document.getElementById('playerViewport').innerHTML = `
+                <video controls autoplay style="width:100%; height:100%;">
+                    <source src="${mediaUrl(id)}" type="${escapeHtml(targetVideo.mime)}">
+                </video>
+            `;
+
+            document.getElementById('watchTitle').innerText = targetVideo.title;
+
+            const watchIcon = document.getElementById('watchChannelIcon');
+            if (targetVideo.authorAvatarV) {
+                watchIcon.style.backgroundImage = `url('${avatarUrl(targetVideo.author, targetVideo.authorAvatarV)}')`;
+                watchIcon.innerText = "";
+            } else {
+                watchIcon.style.backgroundImage = "none";
+                watchIcon.innerText = targetVideo.author.charAt(0).toUpperCase();
+            }
+            document.getElementById('watchChannelName').innerText = targetVideo.author;
+            document.getElementById('deleteVideoBtn').style.display = (activeUser && activeUser === targetVideo.author) ? "inline-block" : "none";
+
+            const sidebar = document.getElementById('relatedSidebar');
+            sidebar.innerHTML = '';
+            cachedVideos.filter(v => v.id !== id).forEach(video => {
+                const item = document.createElement('div');
+                item.className = 'sidebar-card';
+                item.onclick = () => launchWatchMode(video.id);
+                item.innerHTML = `
+                    <div class="sidebar-thumb">
+                        <video src="${mediaUrl(video.id)}#t=1" muted playsinline preload="metadata"></video>
+                    </div>
+                    <div class="sidebar-meta">
+                        <span class="sidebar-title">${escapeHtml(video.title)}</span>
+                        <span class="v-author">${escapeHtml(video.author)}</span>
+                    </div>
+                `;
+                sidebar.appendChild(item);
+            });
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function filterVideos() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            const filtered = cachedVideos.filter(v =>
+                v.title.toLowerCase().includes(query) || v.author.toLowerCase().includes(query)
+            );
+            if (document.getElementById('watchView').style.display === 'grid') {
+                resetToHome(true);
+            }
+            generateBrowseGrid(filtered);
+        }
+
+        function resetToHome(skipRender) {
+            currentVideoId = null;
+            document.getElementById('playerViewport').innerHTML = '';
+            document.getElementById('watchView').style.display = 'none';
+            document.getElementById('videoGrid').style.display = 'grid';
+            if (skipRender === true) return;
+            refreshVideos();
+        }
+
+        function timeAgo(ts) {
+            const s = Math.floor((Date.now() - ts) / 1000);
+            if (s < 60) return "Just now";
+            const units = [["year", 31536000], ["month", 2592000], ["day", 86400], ["hour", 3600], ["minute", 60]];
+            for (const [name, secs] of units) {
+                const n = Math.floor(s / secs);
+                if (n >= 1) return n + " " + name + (n > 1 ? "s" : "") + " ago";
+            }
+            return "Just now";
+        }
+
+        function escapeHtml(text) {
+            return String(text).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+        }
+
+        // ---------- boot ----------
+        window.addEventListener("DOMContentLoaded", async () => {
+            await checkPersistentSession();
+            refreshVideos();
+        });
+    </script>
+</body>
+</html>
